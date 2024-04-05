@@ -51,9 +51,9 @@ function calculateShipping(id, cep) {
             console.error(err);
         });
 }
-
 document.addEventListener('DOMContentLoaded', function () {
     const books = document.querySelector('.books');
+    
 
     fetch('http://localhost:3000/products')
         .then((data) => {
@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-function BuscaId()
-{
+function Mostra(){
     const books = document.querySelector('.books');
+    
 
     fetch('http://localhost:3000/products')
         .then((data) => {
@@ -103,9 +103,66 @@ function BuscaId()
         .then((data) => {
             if (data) {
                 data.forEach((book) => {
-                    if (book.id==document.getElementById('Pesquisa').value)
-                        books.replaceWith(newBook(book));
+                    books.appendChild(newBook(book));
                 });
+
+                document.querySelectorAll('.button-shipping').forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        const cep = document.querySelector(`.book[data-id="${id}"] input`).value;
+                        calculateShipping(id, cep);
+                    });
+                });
+
+                document.querySelectorAll('.button-buy').forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        swal('Compra de livro', 'Sua compra foi realizada com sucesso', 'success');
+                    });
+                });
+            }
+        })
+        .catch((err) => {
+            swal('Erro', 'Erro ao listar os produtos', 'error');
+            console.error(err);
+        });
+}
+
+
+function BuscaId()
+{
+    var books = document.querySelector('.books');
+    books.innerText = " "
+    if(document.getElementById('Pesquisa').value=="")
+        Mostra();
+    fetch('http://localhost:3000/products')
+        .then((data) => {
+            if (data.ok) {
+                return data.json();
+            }
+            throw data.statusText;
+        })
+        .then((data) => {
+            if (data) {
+                data.forEach((book) => {    
+                    if (book.id==document.getElementById('Pesquisa').value)
+                    {
+                        console.log(book);
+                        if(books!=null)
+                            books.appendChild(newBook(book));
+                        else
+                            books.appendChild(newBook(book));
+                    }
+                        
+                    
+                        
+                });
+                fetch('http://localhost:3000/products')
+                .then((data) => {
+                    if (data.ok) {
+                        return data.json();
+                    }
+                    throw data.statusText;
+                })
                 document.querySelectorAll('.button-shipping').forEach((btn) => {
                     btn.addEventListener('click', (e) => {
                         const id = e.target.getAttribute('data-id');
@@ -125,4 +182,5 @@ function BuscaId()
             swal('Erro', 'Erro ao listar os produtos', 'error');
             console.error(err);
         });
+
 }
